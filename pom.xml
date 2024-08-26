@@ -14,4 +14,32 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.23.1</version>
+        </dependency>
+        <dependency>
+            <groupId>decentralized-identity</groupId>
+            <artifactId>uni-resolver-core</artifactId>
+            <version>0.20.0</version>
+        </dependency>
+        <dependency>
+            <groupId>decentralized-identity</groupId>
+            <artifactId>uni-resolver-client</artifactId>
+            <version>0.20.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.leonard</groupId>
+            <artifactId>base58</artifactId>
+            <version>0.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.crypto.tink</groupId>
+            <artifactId>tink</artifactId>
+            <version>1.13.0</version>
+        </dependency>
+    </dependencies>
+
 </project>

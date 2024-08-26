@@ -2,24 +2,26 @@ package demo.sasl.did;
 
 import javax.security.sasl.SaslException;
 
-public abstract class SaslDidBase {
+public abstract class DidSaslBase {
 
-    protected boolean complete;
+    protected boolean completed;
+    protected boolean aborted;
 
-    public SaslDidBase() {
-        this.complete = false;
+    public DidSaslBase() {
+        this.completed = false;
+        this.aborted = false;
     }
 
     public String getMechanismName() {
-        return SaslDidMechanismProvider.MECHANISM_NAME;
+        return DidSaslProvider.MECHANISM_NAME;
     }
 
     public boolean isComplete() {
-        return this.complete;
+        return this.completed;
     }
 
     public byte[] unwrap(byte[] incoming, int offset, int len) throws SaslException {
-        if (this.complete) {
+        if (this.completed) {
             throw new IllegalStateException("Not supported");
         } else {
             throw new IllegalStateException("Authentication not completed");
@@ -27,7 +29,7 @@ public abstract class SaslDidBase {
     }
 
     public byte[] wrap(byte[] outgoing, int offset, int len) throws SaslException {
-        if (this.complete) {
+        if (this.completed) {
             throw new IllegalStateException("Not supported");
         } else {
             throw new IllegalStateException("Authentication not completed");
@@ -35,7 +37,7 @@ public abstract class SaslDidBase {
     }
 
     public Object getNegotiatedProperty(String propName) {
-        if (this.complete) {
+        if (this.completed) {
             return null;
         } else {
             throw new IllegalStateException("CRAM-MD5 authentication not completed");
