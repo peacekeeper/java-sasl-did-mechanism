@@ -37,8 +37,8 @@ concludes, and the host protocol (XMPP, LDAP, etc.) continues with the authentic
 In order to execute the flow and interact with the host protocol, the DID-based SASL authentication mechanism uses the following
 callbacks:
 
-- [NameCallBack](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/javax/security/auth/callback/NameCallback.html) - to obtain the DID from the client
-- [TextInputCallBack](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/javax/security/auth/callback/TextInputCallback.html) - to obtain the DID from the client
+- [NameCallBack](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/javax/security/auth/callback/NameCallback.html) - To obtain the DID from the client
+- [TextInputCallBack](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/javax/security/auth/callback/TextInputCallback.html) - To obtain the DID's private key from the client, in order to create a signature
 
 The name of the DID-based SASL authentication mechanism is "DID-CHALLENGE". Like other SASL authentication mechanisms, the
 use of it can be negotiated between a server and a client.
