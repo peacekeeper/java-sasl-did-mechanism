@@ -29,7 +29,7 @@ public final class DidSaslProvider extends Provider {
 	public static final String MECHANISM_NAME = "DID-CHALLENGE";
 
 	private static final String PROVIDER_NAME = "demo.sasl.did";
-	private static final double PROVIDER_VERSION = 1.0;
+	private static final String PROVIDER_VERSION = "1.0";
 	private static final String PROVIDER_INFO = "A SASL provider for a DID-based authentication mechanism";
 
 	private static final Logger log = LogManager.getLogger(DidSaslProvider.class);
