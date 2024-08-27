@@ -1,4 +1,4 @@
-package demo.sasl.did.server;
+package sasl.did.mechanism.server;
 
 import java.util.Random;
 

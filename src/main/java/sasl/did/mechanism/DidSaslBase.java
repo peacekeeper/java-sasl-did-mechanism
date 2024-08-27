@@ -1,4 +1,4 @@
-package demo.sasl.did;
+package sasl.did.mechanism;
 
 import javax.security.sasl.SaslException;
 

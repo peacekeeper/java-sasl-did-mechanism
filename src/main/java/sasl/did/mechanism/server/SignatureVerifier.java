@@ -1,4 +1,4 @@
-package demo.sasl.did.server;
+package sasl.did.mechanism.server;
 
 import com.google.crypto.tink.subtle.Ed25519Verify;
 import com.nimbusds.jose.jwk.JWK;
@@ -28,7 +28,7 @@ public class SignatureVerifier {
         List<VerificationMethod> authenticationVerificationMethods = didDocument.getAuthenticationVerificationMethodsDereferenced();
         if (authenticationVerificationMethods == null || authenticationVerificationMethods.isEmpty()) throw new IllegalArgumentException("No authentication verification method for DID " + did);
 
-        VerificationMethod verificationMethod = authenticationVerificationMethods.getFirst();
+        VerificationMethod verificationMethod = authenticationVerificationMethods.get(0);
         Map<String, Object> publicKey = verificationMethod.getPublicKeyJwk();
         if (publicKey == null || publicKey.isEmpty()) throw new IllegalArgumentException("No public key for DID " + did);
 

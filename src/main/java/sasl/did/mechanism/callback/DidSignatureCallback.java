@@ -1,4 +1,4 @@
-package demo.sasl.did.callback;
+package sasl.did.mechanism.callback;
 
 public class DidSignatureCallback {
 }

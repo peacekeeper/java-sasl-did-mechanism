@@ -1,6 +1,6 @@
-package demo.sasl.did.server;
+package sasl.did.mechanism.server;
 
-import demo.sasl.did.DidSaslBase;
+import sasl.did.mechanism.DidSaslBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

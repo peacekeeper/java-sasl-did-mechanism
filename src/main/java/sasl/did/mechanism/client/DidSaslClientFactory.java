@@ -1,6 +1,6 @@
-package demo.sasl.did.client;
+package sasl.did.mechanism.client;
 
-import demo.sasl.did.DidSaslProvider;
+import sasl.did.mechanism.DidSaslProvider;
 import io.leonard.Base58;
 
 import javax.security.auth.callback.*;

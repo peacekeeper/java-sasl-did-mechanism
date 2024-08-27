@@ -1,6 +1,6 @@
-package demo.sasl.did.server;
+package sasl.did.mechanism.server;
 
-import demo.sasl.did.DidSaslProvider;
+import sasl.did.mechanism.DidSaslProvider;
 
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.sasl.SaslException;
