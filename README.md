@@ -47,7 +47,7 @@ When negotiating SASL authentication mechanisms, it is also possible to specify 
 In the case of DIDs, these properties can be used to negotiate e.g. acceptable
 [DID methods](https://www.w3.org/TR/did-core/#methods) (types of identifiers) or
 [DID traits](https://gist.github.com/jceb/8e37e4900e815eb14b207ad7e8d02a6c) (characteristics of DID methods, such as
-whether or not they use a blockchain).
+whether they use a blockchain).
 
 ## About
 
