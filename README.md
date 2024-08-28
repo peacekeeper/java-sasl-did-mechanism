@@ -49,6 +49,42 @@ In the case of DIDs, these properties can be used to negotiate e.g. acceptable
 [DID traits](https://gist.github.com/jceb/8e37e4900e815eb14b207ad7e8d02a6c) (characteristics of DID methods, such as
 whether they use a blockchain).
 
+## Diagram
+
+This is a sequence diagram that illustrates how the DID-based SASL authentication mechanism functions as part of
+XMPP as a host protocol.
+
+```mermaid
+sequenceDiagram
+    title The "DID-CHALLENGE" SASL mechanism (using XMPP as host protocol)
+    participant XMPPClient as XMPP Client
+    participant SASLClient as SASL Client
+    participant SASLServer as SASL Server
+    participant XMPPServer as XMPP Server
+    participant DIDResolver as DID Resolver
+    XMPPClient-->XMPPServer: Network Connection
+    XMPPClient->>SASLClient: Start login
+    SASLClient->>XMPPClient: NameCallback
+    XMPPClient->>SASLClient: DID
+    SASLClient->>XMPPClient: TextInputCallback
+    XMPPClient->>SASLClient: DID private key
+    SASLClient->>SASLServer: Start SASL authentication
+    SASLServer->>SASLClient: List of authn mechanisms
+    SASLClient->>SASLServer: Selected authn mechanism "DID-CHALLENGE"
+    SASLServer->>SASLClient: Challenge (nonce, timestamp, hostname)
+    note right of SASLClient: <1809528678543235072.1724868615672@hostname>
+    SASLClient->>SASLServer: Response (DID, signature)
+    note left of SASLServer: did:key:<..did..> 2mJ4tBo6H<..signature..>
+    SASLServer->>DIDResolver: Resolve DID
+    DIDResolver->>SASLServer: DID document with DID public key
+    SASLServer->>SASLServer: Verify signature
+    SASLServer->>XMPPServer: NameCallback with DID
+    XMPPServer->>SASLServer: (empty)
+    SASLServer->>XMPPServer: AuthorizeCallback
+    XMPPServer->>SASLServer: authorized=true
+    SASLServer->>SASLClient: Completed SASL authentication
+```
+
 ## About
 
 Markus Sabadello - https://github.com/peacekeeper/
