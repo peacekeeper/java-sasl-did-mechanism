@@ -1,6 +1,6 @@
-package sasl.did.mechanism.client;
+package sasl.mechanism.did.client;
 
-import sasl.did.mechanism.DidSaslBase;
+import sasl.mechanism.did.DIDChallengeSaslBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,14 +10,14 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 
-public class DidSaslClient extends DidSaslBase implements SaslClient {
+public class DIDChallengeSaslClient extends DIDChallengeSaslBase implements SaslClient {
 
-    private static final Logger log = LogManager.getLogger(DidSaslClient.class);
+    private static final Logger log = LogManager.getLogger(DIDChallengeSaslClient.class);
 
     private final String did;
     private final byte[] privateKeyBytes;
 
-    public DidSaslClient(String did, byte[] privateKeyBytes) throws SaslException {
+    public DIDChallengeSaslClient(String did, byte[] privateKeyBytes) throws SaslException {
         if (did == null || privateKeyBytes == null) throw new SaslException("No 'authorizationId' or 'privateKey' specified");
         this.did = did;
         this.privateKeyBytes = privateKeyBytes;

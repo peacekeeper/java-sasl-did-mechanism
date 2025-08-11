@@ -1,19 +1,19 @@
-package sasl.did.mechanism;
+package sasl.mechanism.did;
 
 import javax.security.sasl.SaslException;
 
-public abstract class DidSaslBase {
+public abstract class DIDChallengeSaslBase {
 
     protected boolean completed;
     protected boolean aborted;
 
-    public DidSaslBase() {
+    public DIDChallengeSaslBase() {
         this.completed = false;
         this.aborted = false;
     }
 
     public String getMechanismName() {
-        return DidSaslProvider.MECHANISM_NAME;
+        return DIDChallengeSaslProvider.MECHANISM_NAME;
     }
 
     public boolean isComplete() {

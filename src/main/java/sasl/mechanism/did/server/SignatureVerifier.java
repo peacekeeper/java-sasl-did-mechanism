@@ -1,4 +1,4 @@
-package sasl.did.mechanism.server;
+package sasl.mechanism.did.server;
 
 import com.google.crypto.tink.subtle.Ed25519Verify;
 import com.nimbusds.jose.jwk.JWK;

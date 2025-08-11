@@ -1,6 +1,6 @@
-package sasl.did.mechanism.client;
+package sasl.mechanism.did.client;
 
-import sasl.did.mechanism.DidSaslProvider;
+import sasl.mechanism.did.DIDChallengeSaslProvider;
 import io.leonard.Base58;
 
 import javax.security.auth.callback.*;
@@ -11,22 +11,22 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
-public class DidSaslClientFactory implements SaslClientFactory {
+public class DIDChallengeSaslClientFactory implements SaslClientFactory {
 
     @Override
     public SaslClient createSaslClient(String[] mechanisms, String authorizationId, String protocol, String serverName, Map<java.lang.String,?> props, CallbackHandler cbh) throws SaslException {
-        if (mechanisms == null || ! Arrays.asList(mechanisms).contains(DidSaslProvider.MECHANISM_NAME)) return null;
+        if (mechanisms == null || ! Arrays.asList(mechanisms).contains(DIDChallengeSaslProvider.MECHANISM_NAME)) return null;
 
         Object[] userInfo = this.getUserInfo(authorizationId, cbh);
         String did = (String) userInfo[0];
         byte[] privateKeyBytes = (byte[]) userInfo[1];
 
-        return new DidSaslClient(did, privateKeyBytes);
+        return new DIDChallengeSaslClient(did, privateKeyBytes);
     }
 
     @Override
     public String[] getMechanismNames(Map<String, ?> map) {
-        return new String[] { DidSaslProvider.MECHANISM_NAME };
+        return new String[] { DIDChallengeSaslProvider.MECHANISM_NAME };
     }
 
     private Object[] getUserInfo(String authorizationId, CallbackHandler cbh) throws SaslException {

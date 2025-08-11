@@ -1,6 +1,6 @@
-package sasl.did.mechanism.server;
+package sasl.mechanism.did.server;
 
-import sasl.did.mechanism.DidSaslBase;
+import sasl.mechanism.did.DIDChallengeSaslBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-public class DidSaslServer extends DidSaslBase implements SaslServer {
+public class DIDChallengeSaslServer extends DIDChallengeSaslBase implements SaslServer {
 
-    private static final Logger log = LogManager.getLogger(DidSaslServer.class);
+    private static final Logger log = LogManager.getLogger(DIDChallengeSaslServer.class);
 
     private final String serverName;
     private final CallbackHandler cbh;
@@ -25,7 +25,7 @@ public class DidSaslServer extends DidSaslBase implements SaslServer {
     private String challenge = null;
     private String authorizationId = null;
 
-    public DidSaslServer(String protocol, String serverName, Map<String,?> props, CallbackHandler cbh) throws SaslException {
+    public DIDChallengeSaslServer(String protocol, String serverName, Map<String,?> props, CallbackHandler cbh) throws SaslException {
         super();
         if (serverName == null) throw new SaslException("No 'serverName' specified");
         this.serverName = serverName;

@@ -1,4 +1,4 @@
-package sasl.did.mechanism.client;
+package sasl.mechanism.did.client;
 
 import com.google.crypto.tink.subtle.Ed25519Sign;
 import io.leonard.Base58;
