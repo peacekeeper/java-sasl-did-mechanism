@@ -23,7 +23,7 @@ public class SignatureVerifier {
         ClientUniResolver clientUniResolver = ClientUniResolver.create(URI.create("https://dev.uniresolver.io/1.0/"));
 
         ResolveResult resolveResult = clientUniResolver.resolve(did);
-        DIDDocument didDocument = resolveResult.toResolveDataModelResult().getDidDocument();
+        DIDDocument didDocument = resolveResult.getDidDocument();
 
         List<VerificationMethod> authenticationVerificationMethods = didDocument.getAuthenticationVerificationMethodsDereferenced();
         if (authenticationVerificationMethods == null || authenticationVerificationMethods.isEmpty()) throw new IllegalArgumentException("No authentication verification method for DID " + did);
