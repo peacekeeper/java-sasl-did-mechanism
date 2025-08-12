@@ -3,6 +3,7 @@ package sasl.mechanism.did.server;
 import sasl.mechanism.did.DIDChallengeSaslBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sasl.mechanism.did.signatures.SignatureVerifier;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -77,9 +78,11 @@ public class DIDChallengeSaslServer extends DIDChallengeSaslBase implements Sasl
         }
 
         String did = response.substring(0, didLength);
-        log.debug("Extracted DID: {}", did);
+        String signature = response.substring(didLength + 1);
+        log.info("Extracted DID: {}", did);
+        log.info("Extracted signature: {}", signature);
 
-        NameCallback ncb = new NameCallback("SASL authentication ID: ", did);
+        NameCallback ncb = new NameCallback("DID: ", did);
         try {
             this.cbh.handle(new Callback[] { ncb });
         } catch (IOException | UnsupportedCallbackException ex) {
@@ -87,7 +90,6 @@ public class DIDChallengeSaslServer extends DIDChallengeSaslBase implements Sasl
             throw new SaslException("SASL authentication failed", ex);
         }
 
-        String signature = response.substring(didLength + 1);
         try {
             SignatureVerifier.verifySignature(this.challenge, did, signature);
         } catch (Exception ex) {

@@ -1,26 +1,27 @@
 package sasl.mechanism.did.client;
 
+import com.danubetech.keyformats.jose.JWK;
 import sasl.mechanism.did.DIDChallengeSaslBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sasl.mechanism.did.signatures.SignatureCreator;
 
 import javax.security.sasl.SaslClient;
 import javax.security.sasl.SaslException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
 
 public class DIDChallengeSaslClient extends DIDChallengeSaslBase implements SaslClient {
 
     private static final Logger log = LogManager.getLogger(DIDChallengeSaslClient.class);
 
     private final String did;
-    private final byte[] privateKeyBytes;
+    private JWK privateKey;
 
-    public DIDChallengeSaslClient(String did, byte[] privateKeyBytes) throws SaslException {
-        if (did == null || privateKeyBytes == null) throw new SaslException("No 'authorizationId' or 'privateKey' specified");
+    public DIDChallengeSaslClient(String did, JWK privateKey) throws SaslException {
+        if (did == null || privateKey == null) throw new SaslException("No 'authorizationId' or 'privateKey' specified");
         this.did = did;
-        this.privateKeyBytes = privateKeyBytes;
+        this.privateKey = privateKey;
     }
 
     @Override
@@ -38,11 +39,11 @@ public class DIDChallengeSaslClient extends DIDChallengeSaslBase implements Sasl
 
         String signature;
         try {
-            signature = SignatureCreator.createSignature(challenge, this.privateKeyBytes);
+            signature = SignatureCreator.createSignature(challenge, this.privateKey);
         } catch (GeneralSecurityException ex) {
             throw new SaslException("Failed to create signature:" + ex.getMessage(), ex);
         }
-        this.clearPrivateKeyBytes();
+        this.clearPrivateKey();
 
         String response = this.did + " " + signature;
         log.debug("Sending response: {}", response);
@@ -53,10 +54,10 @@ public class DIDChallengeSaslClient extends DIDChallengeSaslBase implements Sasl
 
     @Override
     public void dispose() {
-        this.clearPrivateKeyBytes();
+        this.clearPrivateKey();
     }
 
-    private void clearPrivateKeyBytes() {
-        Arrays.fill(this.privateKeyBytes, (byte) 0);
+    private void clearPrivateKey() {
+        this.privateKey = null;
     }
 }

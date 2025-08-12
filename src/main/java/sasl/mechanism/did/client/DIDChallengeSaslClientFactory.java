@@ -1,9 +1,13 @@
 package sasl.mechanism.did.client;
 
+import com.danubetech.keyformats.jose.JWK;
 import sasl.mechanism.did.DIDChallengeSaslProvider;
-import io.leonard.Base58;
+import sasl.mechanism.did.callback.JWKCallback;
 
-import javax.security.auth.callback.*;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.sasl.SaslClient;
 import javax.security.sasl.SaslClientFactory;
 import javax.security.sasl.SaslException;
@@ -19,9 +23,9 @@ public class DIDChallengeSaslClientFactory implements SaslClientFactory {
 
         Object[] userInfo = this.getUserInfo(authorizationId, cbh);
         String did = (String) userInfo[0];
-        byte[] privateKeyBytes = (byte[]) userInfo[1];
+        JWK privateKey = (JWK) userInfo[1];
 
-        return new DIDChallengeSaslClient(did, privateKeyBytes);
+        return new DIDChallengeSaslClient(did, privateKey);
     }
 
     @Override
@@ -36,20 +40,24 @@ public class DIDChallengeSaslClientFactory implements SaslClientFactory {
             String namePrompt = "DID: ";
             String textInputCallback = "Private key: ";
 
-            NameCallback ncb = authorizationId == null ? new NameCallback(namePrompt) : new NameCallback(namePrompt, authorizationId);
-            TextInputCallback ticb = new TextInputCallback(textInputCallback, "(base58 encoded)");
+            NameCallback nc = authorizationId == null ? new NameCallback(namePrompt) : new NameCallback(namePrompt, authorizationId);
+            JWKCallback jwkc = new JWKCallback(textInputCallback, "(JWK)");
 
             try {
-                cbh.handle(new Callback[] { ncb, ticb });
+                cbh.handle(new Callback[] { nc, jwkc });
             } catch (IOException | UnsupportedCallbackException ex) {
                 throw new SaslException("Failed to handle callback: " + ex.getMessage(), ex);
             }
 
-            String did = ncb.getName();
-            String privateKey = ticb.getText();
-            byte[] privateKeyBytes = Base58.decode(privateKey);
+            String did = nc.getName();
+            JWK privateKey;
+            try {
+                privateKey = JWK.fromJson(jwkc.getText());
+            } catch (IOException ex) {
+                throw new SaslException("Invalid private key JWK: " + ex.getMessage(), ex);
+            }
 
-            return new Object[] { did, privateKeyBytes };
+            return new Object[] { did, privateKey };
         }
     }
 }

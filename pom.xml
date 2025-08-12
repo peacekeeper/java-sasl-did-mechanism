@@ -38,6 +38,11 @@
             <version>0.44.0</version>
         </dependency>
         <dependency>
+            <groupId>com.danubetech</groupId>
+            <artifactId>key-formats-java</artifactId>
+            <version>1.22.0</version>
+        </dependency>
+        <dependency>
             <groupId>io.leonard</groupId>
             <artifactId>base58</artifactId>
             <version>0.0.2</version>
