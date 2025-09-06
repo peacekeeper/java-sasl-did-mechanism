@@ -66,7 +66,7 @@ sequenceDiagram
     ProtocolClient->>SASLClient: Start login
     SASLClient->>ProtocolClient: NameCallback for DID
     ProtocolClient->>SASLClient: DID
-    note right of SASLClient: did:key:<..did..>
+    note left of SASLClient: did:key:<..did..>
     SASLClient->>ProtocolClient: JWKCallback for DID private key
     ProtocolClient->>SASLClient: DID private key
     SASLClient->>SASLServer: Start SASL authentication
