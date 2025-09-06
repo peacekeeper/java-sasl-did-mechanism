@@ -30,12 +30,12 @@
         <dependency>
             <groupId>decentralized-identity</groupId>
             <artifactId>uni-resolver-core</artifactId>
-            <version>0.44.0</version>
+            <version>0.45.0</version>
         </dependency>
         <dependency>
             <groupId>decentralized-identity</groupId>
             <artifactId>uni-resolver-client</artifactId>
-            <version>0.44.0</version>
+            <version>0.45.0</version>
         </dependency>
         <dependency>
             <groupId>com.danubetech</groupId>
