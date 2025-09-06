@@ -28,7 +28,7 @@ public class SignatureVerifier {
 
     private static final ClientUniResolver clientUniResolver = ClientUniResolver.create(URI.create("https://dev.uniresolver.io/1.0/"));
 
-    public static void verifySignature(String challenge, String did, String signature) throws ResolutionException, GeneralSecurityException, ParseException, IOException {
+    public static void verifySignature(String challenge, String did, String signature) throws ResolutionException, GeneralSecurityException, IOException {
 
         JWK publicKeyJwk = dereferenceJWK(did);
 
