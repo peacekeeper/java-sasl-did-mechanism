@@ -69,6 +69,7 @@ sequenceDiagram
     note left of SASLClient: did:key:<..did..>
     SASLClient->>ProtocolClient: JWKCallback for DID private key
     ProtocolClient->>SASLClient: DID private key
+    note left of SASLClient: { "kid": "..", "kty": "OKP", "crv": "Ed25519", "x": "..", "d": ".." }
     SASLClient->>SASLServer: Start SASL authentication
     SASLServer->>SASLClient: List of authn mechanisms
     SASLClient->>SASLServer: Selected authn mechanism "DID-CHALLENGE"
