@@ -56,18 +56,19 @@ XMPP as a host protocol.
 
 ```mermaid
 sequenceDiagram
-    title The "DID-CHALLENGE" SASL mechanism (using XMPP as host protocol)
-    participant XMPPClient as XMPP Client
+    title The "DID-CHALLENGE" SASL mechanism
+    participant ProtocolClient as XMPP Client
     participant SASLClient as SASL Client
     participant SASLServer as SASL Server
-    participant XMPPServer as XMPP Server
+    participant ProtocolServer as XMPP Server
     participant DIDResolver as DID Resolver
-    XMPPClient-->XMPPServer: Network Connection
-    XMPPClient->>SASLClient: Start login
-    SASLClient->>XMPPClient: NameCallback
-    XMPPClient->>SASLClient: DID
-    SASLClient->>XMPPClient: TextInputCallback
-    XMPPClient->>SASLClient: DID private key
+    ProtocolClient-->ProtocolServer: Network Connection
+    ProtocolClient->>SASLClient: Start login
+    SASLClient->>ProtocolClient: NameCallback for DID
+    ProtocolClient->>SASLClient: DID
+    note right of SASLClient: did:key:<..did..>
+    SASLClient->>ProtocolClient: JWKCallback for DID private key
+    ProtocolClient->>SASLClient: DID private key
     SASLClient->>SASLServer: Start SASL authentication
     SASLServer->>SASLClient: List of authn mechanisms
     SASLClient->>SASLServer: Selected authn mechanism "DID-CHALLENGE"
@@ -78,10 +79,10 @@ sequenceDiagram
     SASLServer->>DIDResolver: Resolve DID
     DIDResolver->>SASLServer: DID document with DID public key
     SASLServer->>SASLServer: Verify signature
-    SASLServer->>XMPPServer: NameCallback with DID
-    XMPPServer->>SASLServer: (empty)
-    SASLServer->>XMPPServer: AuthorizeCallback
-    XMPPServer->>SASLServer: authorized=true
+    SASLServer->>ProtocolServer: NameCallback with DID
+    ProtocolServer->>SASLServer: (empty)
+    SASLServer->>ProtocolServer: AuthorizeCallback
+    ProtocolServer->>SASLServer: authorized=true with DID
     SASLServer->>SASLClient: Completed SASL authentication
 ```
 
