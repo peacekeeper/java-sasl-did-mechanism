@@ -75,6 +75,7 @@ sequenceDiagram
     SASLClient->>SASLServer: Selected authn mechanism "DID-CHALLENGE"
     SASLServer->>SASLClient: Challenge (nonce, timestamp, hostname)
     note right of SASLClient: <1809528678543235072.1724868615672@hostname>
+    SASLClient->>SASLClient: Verify signature
     SASLClient->>SASLServer: Response (DID, signature)
     note left of SASLServer: did:key:<..did..> 2mJ4tBo6H<..signature..>
     SASLServer->>DIDResolver: Resolve DID
