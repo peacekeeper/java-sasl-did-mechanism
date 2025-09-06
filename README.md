@@ -52,15 +52,15 @@ whether they use a blockchain).
 ## Diagram
 
 This is a sequence diagram that illustrates how the DID-based SASL authentication mechanism functions as part of
-XMPP as a host protocol.
+an existing protocol.
 
 ```mermaid
 sequenceDiagram
     title The "DID-CHALLENGE" SASL mechanism
-    participant ProtocolClient as XMPP Client
+    participant ProtocolClient as Protocol Client
     participant SASLClient as SASL Client
     participant SASLServer as SASL Server
-    participant ProtocolServer as XMPP Server
+    participant ProtocolServer as Protocol Server
     participant DIDResolver as DID Resolver
     ProtocolClient-->ProtocolServer: Network Connection
     ProtocolClient->>SASLClient: Start login
