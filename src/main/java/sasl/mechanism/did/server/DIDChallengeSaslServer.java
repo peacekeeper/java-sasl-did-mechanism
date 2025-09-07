@@ -82,7 +82,7 @@ public class DIDChallengeSaslServer extends DIDChallengeSaslBase implements Sasl
         log.info("Extracted DID: {}", did);
         log.info("Extracted signature: {}", signature);
 
-        NameCallback ncb = new NameCallback("DID: ", did);
+        NameCallback ncb = new NameCallback("Server DID: ", did);
         try {
             this.cbh.handle(new Callback[] { ncb });
         } catch (IOException | UnsupportedCallbackException ex) {

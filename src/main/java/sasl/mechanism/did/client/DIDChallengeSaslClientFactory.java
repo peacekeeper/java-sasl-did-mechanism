@@ -37,8 +37,8 @@ public class DIDChallengeSaslClientFactory implements SaslClientFactory {
         if (cbh == null) {
             throw new SaslException("Callback handler to get username/password required");
         } else {
-            String namePrompt = "DID: ";
-            String textInputCallback = "Private key: ";
+            String namePrompt = "Client DID: ";
+            String textInputCallback = "Client private key: ";
 
             NameCallback nc = authorizationId == null ? new NameCallback(namePrompt) : new NameCallback(namePrompt, authorizationId);
             JWKCallback jwkc = new JWKCallback(textInputCallback, "(JWK)");
