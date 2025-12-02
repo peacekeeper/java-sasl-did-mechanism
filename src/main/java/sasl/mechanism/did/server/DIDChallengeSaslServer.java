@@ -1,8 +1,8 @@
 package sasl.mechanism.did.server;
 
-import sasl.mechanism.did.DIDChallengeSaslBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sasl.mechanism.did.DIDChallengeSaslBase;
 import sasl.mechanism.did.signatures.SignatureVerifier;
 
 import javax.security.auth.callback.Callback;

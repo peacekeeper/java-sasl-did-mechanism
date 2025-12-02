@@ -1,9 +1,9 @@
 package sasl.mechanism.did.client;
 
 import com.danubetech.keyformats.jose.JWK;
-import sasl.mechanism.did.DIDChallengeSaslBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sasl.mechanism.did.DIDChallengeSaslBase;
 import sasl.mechanism.did.signatures.SignatureCreator;
 
 import javax.security.sasl.SaslClient;

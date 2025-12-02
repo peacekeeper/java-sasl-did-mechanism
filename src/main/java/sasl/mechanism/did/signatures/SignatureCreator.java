@@ -3,7 +3,6 @@ package sasl.mechanism.did.signatures;
 import com.danubetech.keyformats.crypto.PrivateKeySigner;
 import com.danubetech.keyformats.crypto.PrivateKeySignerFactory;
 import com.danubetech.keyformats.jose.JWK;
-import com.danubetech.keyformats.jose.JWSAlgorithm;
 import com.danubetech.keyformats.jose.KeyTypeName;
 import com.danubetech.keyformats.keytypes.KeyTypeName_for_JWK;
 import io.leonard.Base58;
@@ -12,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.util.Map;
 
 public class SignatureCreator {
 
