@@ -14,6 +14,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <scm>
+      <connection>scm:git:https://github.com/peacekeeper/java-sasl-did-mechanism.git</connection>
+      <developerConnection>scm:git:git@github.com:peacekeeper/java-sasl-did-mechanism.git</developerConnection>
+      <url>https://github.com/peacekeeper/java-sasl-did-mechanism</url>
+    </scm>
+
     <repositories>
         <repository>
             <id>danubetech-maven-public</id>
