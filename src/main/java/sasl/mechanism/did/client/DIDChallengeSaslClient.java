@@ -26,7 +26,9 @@ public class DIDChallengeSaslClient extends DIDChallengeSaslBase implements Sasl
 
     @Override
     public boolean hasInitialResponse() {
-        return false;
+        boolean result = false;
+        log.info("hasInitialResponse() -> " + result);
+        return result;
     }
 
     @Override

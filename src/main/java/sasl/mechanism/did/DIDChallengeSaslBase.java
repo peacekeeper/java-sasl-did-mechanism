@@ -1,8 +1,14 @@
 package sasl.mechanism.did;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import sasl.mechanism.did.server.DIDChallengeSaslServer;
+
 import javax.security.sasl.SaslException;
 
 public abstract class DIDChallengeSaslBase {
+
+    private static final Logger log = LogManager.getLogger(DIDChallengeSaslBase.class);
 
     protected boolean completed;
     protected boolean aborted;
@@ -13,11 +19,15 @@ public abstract class DIDChallengeSaslBase {
     }
 
     public String getMechanismName() {
-        return DIDChallengeSaslProvider.MECHANISM_NAME;
+        String result = DIDChallengeSaslProvider.MECHANISM_NAME;
+        log.info("getMechanismName() -> " + result);
+        return result;
     }
 
     public boolean isComplete() {
-        return this.completed;
+        boolean result = this.completed;
+        log.info("isComplete() -> " + result);
+        return result;
     }
 
     public byte[] unwrap(byte[] incoming, int offset, int len) throws SaslException {

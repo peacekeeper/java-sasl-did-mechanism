@@ -52,7 +52,9 @@ public class DIDChallengeSaslServer extends DIDChallengeSaslBase implements Sasl
     @Override
     public String getAuthorizationID() {
         if (! this.completed) throw new IllegalStateException("SASL authentication not completed");
-        return this.authorizationId;
+        String result = this.authorizationId;
+        log.info("getAuthorizationID() -> " + result);
+        return result;
     }
 
     @Override
@@ -62,8 +64,8 @@ public class DIDChallengeSaslServer extends DIDChallengeSaslBase implements Sasl
 
     private byte[] evaluateResponseForEmptyChallenge() throws SaslException {
         this.challenge = ChallengeGenerator.generateChallenge(this.serverName);
-        log.debug("Generated challenge: {}", challenge);
-        byte[] challengeData = challenge.getBytes(StandardCharsets.UTF_8);
+        log.debug("Generated challenge: {}", this.challenge);
+        byte[] challengeData = this.challenge.getBytes(StandardCharsets.UTF_8);
         return challengeData.clone();
     }
 
