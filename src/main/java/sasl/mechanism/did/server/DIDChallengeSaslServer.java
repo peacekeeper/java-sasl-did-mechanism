@@ -3,6 +3,7 @@ package sasl.mechanism.did.server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sasl.mechanism.did.DIDChallengeSaslBase;
+import sasl.mechanism.did.messages.SASLChallenge;
 import sasl.mechanism.did.server.did.DIDChallengeGenerator;
 import sasl.mechanism.did.server.did.DIDResponseVerifier;
 
@@ -24,7 +25,7 @@ public class DIDChallengeSaslServer extends DIDChallengeSaslBase implements Sasl
     private final String serverName;
     private final CallbackHandler cbh;
 
-    private String challenge = null;
+    private SASLChallenge challenge = null;
     private String authorizationId = null;
 
     public DIDChallengeSaslServer(String protocol, String serverName, Map<String,?> props, CallbackHandler cbh) throws SaslException {
@@ -37,7 +38,7 @@ public class DIDChallengeSaslServer extends DIDChallengeSaslBase implements Sasl
     @Override
     public byte[] evaluateResponse(byte[] responseData) throws SaslException {
         if (this.completed) throw new IllegalStateException("SASL authentication already completed");
-        if (this.aborted) throw new IllegalStateException("SASL authentication already aborted");
+        if (this.aborted) throw new IllegalStateException("SASL authentication aborted");
 
         if (this.challenge == null) {
             if (responseData.length != 0) {
@@ -66,14 +67,14 @@ public class DIDChallengeSaslServer extends DIDChallengeSaslBase implements Sasl
     private byte[] evaluateResponseForEmptyChallenge() throws SaslException {
         this.challenge = DIDChallengeGenerator.generateChallenge(this.serverName);
         log.debug("Generated challenge: {}", this.challenge);
-        byte[] challengeData = this.challenge.getBytes(StandardCharsets.UTF_8);
+        byte[] challengeData = this.challenge.getMessageBytes();
         return challengeData.clone();
     }
 
-    private byte[] evaluateResponseForChallenge(byte[] responseData) throws SaslException {
-        log.debug("Received response: {}", new String(responseData, StandardCharsets.UTF_8));
+    private byte[] evaluateResponseForChallenge(byte[] responseBytes) throws SaslException {
+        log.debug("Received response: {}", new String(responseBytes, StandardCharsets.UTF_8));
 
-        String response = new String(responseData, StandardCharsets.UTF_8);
+        String response = new String(responseBytes, StandardCharsets.UTF_8);
         int didLength = response.indexOf(' ');
         if (didLength == 0) {
             this.aborted = true;
@@ -94,7 +95,7 @@ public class DIDChallengeSaslServer extends DIDChallengeSaslBase implements Sasl
         }
 
         try {
-            DIDResponseVerifier.verifySignature(this.challenge, did, signature);
+            DIDResponseVerifier.verifySignature(this.challenge.getMessageBytes(), did, signature);
         } catch (Exception ex) {
             this.aborted = true;
             throw new SaslException("Failed to verify signature: " + ex.getMessage(), ex);

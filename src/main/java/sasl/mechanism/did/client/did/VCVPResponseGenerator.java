@@ -15,6 +15,8 @@ import foundation.identity.did.DID;
 import foundation.identity.jsonld.JsonLDException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sasl.mechanism.did.messages.VCVPChallenge;
+import sasl.mechanism.did.messages.VCVPResponse;
 import sasl.mechanism.did.util.JWSAlgorithmUtil;
 
 import java.io.IOException;
@@ -28,8 +30,7 @@ public class VCVPResponseGenerator {
 
     private static final Logger log = LogManager.getLogger(VCVPResponseGenerator.class);
 
-    public static String generateResponse(String challenge, DID did, JWK privateKeyJwk, Map<String, VerifiableCredentialV2> verifiableCredentials) throws GeneralSecurityException, JsonLDException, IOException {
-        byte[] challengeBytes = challenge.getBytes(StandardCharsets.UTF_8);
+    public static VCVPResponse generateResponse(VCVPChallenge vcvpChallenge, DID did, JWK privateKeyJwk, Map<String, VerifiableCredentialV2> verifiableCredentials) throws GeneralSecurityException, JsonLDException, IOException {
 
         VerifiableCredentialV2 verifiableCredential = verifiableCredentials.get("0");
 
@@ -51,8 +52,8 @@ public class VCVPResponseGenerator {
 
         ldSigner.sign(verifiablePresentation);
 
-        String response = verifiablePresentation.toJson();
-        log.debug("Created response for challenge {}: {}", challenge, response);
-        return response;
+        VCVPResponse vcvpResponse = VCVPResponse.create(verifiablePresentation);
+        log.debug("Created response for challenge {}: {}", vcvpChallenge, vcvpResponse);
+        return vcvpResponse;
     }
 }

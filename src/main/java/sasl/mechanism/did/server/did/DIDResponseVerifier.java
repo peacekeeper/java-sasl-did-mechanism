@@ -28,7 +28,7 @@ public class DIDResponseVerifier {
 
     private static final ClientUniResolver clientUniResolver = ClientUniResolver.create(URI.create("https://dev.uniresolver.io/1.0/"));
 
-    public static void verifySignature(String challenge, String did, String signature) throws ResolutionException, GeneralSecurityException, IOException {
+    public static void verifySignature(byte[] challenge, String did, String signature) throws ResolutionException, GeneralSecurityException, IOException {
 
         JWK publicKeyJwk = dereferenceJWK(did);
 
@@ -36,7 +36,7 @@ public class DIDResponseVerifier {
         String algorithm = JWSAlgorithmUtil.getDefaultJWSAlgorithmForKeyTypeName(keyTypeName);
         PublicKeyVerifier<?> publicKeyVerifier = PublicKeyVerifierFactory.publicKeyVerifierForKey(publicKeyJwk, algorithm);
 
-        byte[] challengeBytes = challenge.getBytes(StandardCharsets.UTF_8);
+        byte[] challengeBytes = challenge;
         byte[] signatureBytes = Base58.decode(signature);
         boolean verified = publicKeyVerifier.verify(challengeBytes, signatureBytes, algorithm);
         log.debug("Verified signature {} for challenge {}: {}", signature, challenge, verified);

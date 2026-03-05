@@ -2,6 +2,7 @@ package sasl.mechanism.did.server.did;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sasl.mechanism.did.messages.DIDChallenge;
 
 import java.util.Random;
 
@@ -11,11 +12,11 @@ public class DIDChallengeGenerator {
 
     private static final Random RANDOM = new Random();
 
-    public static String generateChallenge(String serverName) {
-        long rand = RANDOM.nextLong();
+    public static DIDChallenge generateChallenge(String realm) {
+        String nonce = Long.toString(RANDOM.nextLong());
         long timestamp = System.currentTimeMillis();
-        String challenge = "<" + rand + '.' + timestamp + '@' + serverName + '>';
-        log.debug("Generated challenge: {}", challenge);
-        return challenge;
+        DIDChallenge didChallenge = DIDChallenge.create(nonce, timestamp, realm);
+        log.debug("Generated challenge: {}", didChallenge);
+        return didChallenge;
     }
 }

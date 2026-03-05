@@ -9,14 +9,16 @@ import org.apache.logging.log4j.Logger;
 import sasl.mechanism.did.DIDChallengeSaslBase;
 import sasl.mechanism.did.client.did.DIDResponseGenerator;
 import sasl.mechanism.did.client.did.VCVPResponseGenerator;
+import sasl.mechanism.did.messages.DIDChallenge;
+import sasl.mechanism.did.messages.SASLChallenge;
+import sasl.mechanism.did.messages.SASLResponse;
+import sasl.mechanism.did.messages.VCVPChallenge;
 
 import javax.security.sasl.SaslClient;
 import javax.security.sasl.SaslException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class DIDChallengeSaslClient extends DIDChallengeSaslBase implements SaslClient {
 
@@ -41,23 +43,23 @@ public class DIDChallengeSaslClient extends DIDChallengeSaslBase implements Sasl
     }
 
     @Override
-    public byte[] evaluateChallenge(byte[] challengeData) throws SaslException {
+    public byte[] evaluateChallenge(byte[] challengeBytes) throws SaslException {
         if (this.completed) throw new IllegalStateException("SASL authentication already completed");
         if (this.aborted) throw new IllegalStateException("SASL authentication already aborted");
 
-        String challenge = new String(challengeData, StandardCharsets.UTF_8);
+        SASLChallenge challenge = SASLChallenge.fromMessage(challengeBytes);
         log.debug("Received challenge: {}", challenge);
 
-        String response;
-        if (isDIDChallenge(challenge)) {
+        SASLResponse response;
+        if (challenge instanceof DIDChallenge didChallenge) {
             try {
-                response = DIDResponseGenerator.generateResponse(challenge, this.did, this.privateKey);
+                response = DIDResponseGenerator.generateResponse(didChallenge, this.did, this.privateKey);
             } catch (GeneralSecurityException ex) {
                 throw new SaslException("Failed to create DID Response:" + ex.getMessage(), ex);
             }
-        } else if (isVCVPChallenge(challenge)) {
+        } else if (challenge instanceof VCVPChallenge vcvpChallenge) {
             try {
-                response = VCVPResponseGenerator.generateResponse(challenge, this.did, this.privateKey, this.verifiableCredentials);
+                response = VCVPResponseGenerator.generateResponse(vcvpChallenge, this.did, this.privateKey, this.verifiableCredentials);
             } catch (GeneralSecurityException | JsonLDException | IOException ex) {
                 throw new SaslException("Failed to create VC/VP Response:" + ex.getMessage(), ex);
             }
@@ -67,7 +69,7 @@ public class DIDChallengeSaslClient extends DIDChallengeSaslBase implements Sasl
 
         this.completed = true;
         log.debug("Sending response: {}", response);
-        return response.getBytes(StandardCharsets.UTF_8);
+        return response.getMessageBytes();
     }
 
     @Override
@@ -78,16 +80,5 @@ public class DIDChallengeSaslClient extends DIDChallengeSaslBase implements Sasl
     private void clearPrivateData() {
         this.privateKey = null;
         this.verifiableCredentials = null;
-    }
-
-    private static final Pattern PATTERN_DID_CHALLENGE = Pattern.compile("<([^.]+)\\.([^.]+)@([^.]+)>");
-    private static final Pattern PATTERN_VCVP_CHALLENGE = Pattern.compile("<([^.]+)\\.([^.]+)\\.([^.]+)@([^.]+)>");
-
-    private static boolean isDIDChallenge(String challenge) {
-        return PATTERN_DID_CHALLENGE.matcher(challenge).matches();
-    }
-
-    private static boolean isVCVPChallenge(String challenge) {
-        return PATTERN_VCVP_CHALLENGE.matcher(challenge).matches();
     }
 }
