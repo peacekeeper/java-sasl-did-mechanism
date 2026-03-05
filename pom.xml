@@ -49,6 +49,11 @@
             <version>1.24.0</version>
         </dependency>
         <dependency>
+            <groupId>com.danubetech</groupId>
+            <artifactId>verifiable-credentials-java</artifactId>
+            <version>1.27.0</version>
+        </dependency>
+        <dependency>
             <groupId>io.leonard</groupId>
             <artifactId>base58</artifactId>
             <version>0.0.2</version>

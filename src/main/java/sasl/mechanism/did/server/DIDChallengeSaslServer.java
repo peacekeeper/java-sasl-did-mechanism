@@ -3,7 +3,8 @@ package sasl.mechanism.did.server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sasl.mechanism.did.DIDChallengeSaslBase;
-import sasl.mechanism.did.signatures.SignatureVerifier;
+import sasl.mechanism.did.server.did.DIDChallengeGenerator;
+import sasl.mechanism.did.server.did.DIDResponseVerifier;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -63,7 +64,7 @@ public class DIDChallengeSaslServer extends DIDChallengeSaslBase implements Sasl
     }
 
     private byte[] evaluateResponseForEmptyChallenge() throws SaslException {
-        this.challenge = ChallengeGenerator.generateChallenge(this.serverName);
+        this.challenge = DIDChallengeGenerator.generateChallenge(this.serverName);
         log.debug("Generated challenge: {}", this.challenge);
         byte[] challengeData = this.challenge.getBytes(StandardCharsets.UTF_8);
         return challengeData.clone();
@@ -93,7 +94,7 @@ public class DIDChallengeSaslServer extends DIDChallengeSaslBase implements Sasl
         }
 
         try {
-            SignatureVerifier.verifySignature(this.challenge, did, signature);
+            DIDResponseVerifier.verifySignature(this.challenge, did, signature);
         } catch (Exception ex) {
             this.aborted = true;
             throw new SaslException("Failed to verify signature: " + ex.getMessage(), ex);

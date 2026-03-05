@@ -1,4 +1,4 @@
-package sasl.mechanism.did.signatures;
+package sasl.mechanism.did.server.did;
 
 import com.danubetech.keyformats.crypto.PublicKeyVerifier;
 import com.danubetech.keyformats.crypto.PublicKeyVerifierFactory;
@@ -10,6 +10,7 @@ import foundation.identity.did.VerificationMethod;
 import io.leonard.Base58;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sasl.mechanism.did.util.JWSAlgorithmUtil;
 import uniresolver.ResolutionException;
 import uniresolver.client.ClientUniResolver;
 import uniresolver.result.ResolveResult;
@@ -21,9 +22,9 @@ import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
 
-public class SignatureVerifier {
+public class VCVPResponseVerifier {
 
-    private static final Logger log = LogManager.getLogger(SignatureVerifier.class);
+    private static final Logger log = LogManager.getLogger(VCVPResponseVerifier.class);
 
     private static final ClientUniResolver clientUniResolver = ClientUniResolver.create(URI.create("https://dev.uniresolver.io/1.0/"));
 
@@ -32,7 +33,7 @@ public class SignatureVerifier {
         JWK publicKeyJwk = dereferenceJWK(did);
 
         KeyTypeName keyTypeName = KeyTypeName_for_JWK.keyTypeName_for_JWK(publicKeyJwk);
-        String algorithm = JWSAlgorithms.JWS_ALGORITHMS.get(keyTypeName);
+        String algorithm = JWSAlgorithmUtil.getDefaultJWSAlgorithmForKeyTypeName(keyTypeName);
         PublicKeyVerifier<?> publicKeyVerifier = PublicKeyVerifierFactory.publicKeyVerifierForKey(publicKeyJwk, algorithm);
 
         byte[] challengeBytes = challenge.getBytes(StandardCharsets.UTF_8);

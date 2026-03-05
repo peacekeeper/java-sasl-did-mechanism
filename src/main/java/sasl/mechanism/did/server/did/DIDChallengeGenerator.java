@@ -1,13 +1,13 @@
-package sasl.mechanism.did.server;
+package sasl.mechanism.did.server.did;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
 
-public class ChallengeGenerator {
+public class DIDChallengeGenerator {
 
-    private static final Logger log = LogManager.getLogger(ChallengeGenerator.class);
+    private static final Logger log = LogManager.getLogger(DIDChallengeGenerator.class);
 
     private static final Random RANDOM = new Random();
 

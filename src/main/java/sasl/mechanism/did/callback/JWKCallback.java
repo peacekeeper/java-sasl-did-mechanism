@@ -1,6 +1,9 @@
 package sasl.mechanism.did.callback;
 
+import java.io.Serial;
+
 public class JWKCallback extends javax.security.auth.callback.TextInputCallback {
+    @Serial
     private static final long serialVersionUID = -1378003535968721493L;
 
     public JWKCallback(java.lang.String prompt) {
