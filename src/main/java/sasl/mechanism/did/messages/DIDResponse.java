@@ -29,7 +29,7 @@ public class DIDResponse extends SASLResponse {
 
     public static DIDResponse create(DID did, byte[] signature) {
         String didString = did.toString();
-        String signatureString = Base64.encodeBase64String(signature);
+        String signatureString = Base64.encodeBase64URLSafeString(signature);
         String message = didString + " " + signatureString;
         byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
         return new DIDResponse(messageBytes, message, didString, signatureString, did, signature);
