@@ -3,9 +3,10 @@ package sasl.mechanism.did.server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sasl.mechanism.did.DIDChallengeSaslBase;
-import sasl.mechanism.did.messages.SASLChallenge;
+import sasl.mechanism.did.messages.*;
 import sasl.mechanism.did.server.did.DIDChallengeGenerator;
 import sasl.mechanism.did.server.did.DIDResponseVerifier;
+import sasl.mechanism.did.server.did.VCVPResponseVerifier;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -25,7 +26,7 @@ public class DIDChallengeSaslServer extends DIDChallengeSaslBase implements Sasl
     private final String serverName;
     private final CallbackHandler cbh;
 
-    private SASLChallenge challenge = null;
+    private SASLChallenge saslChallenge = null;
     private String authorizationId = null;
 
     public DIDChallengeSaslServer(String protocol, String serverName, Map<String,?> props, CallbackHandler cbh) throws SaslException {
@@ -40,7 +41,7 @@ public class DIDChallengeSaslServer extends DIDChallengeSaslBase implements Sasl
         if (this.completed) throw new IllegalStateException("SASL authentication already completed");
         if (this.aborted) throw new IllegalStateException("SASL authentication aborted");
 
-        if (this.challenge == null) {
+        if (this.saslChallenge == null) {
             if (responseData.length != 0) {
                 this.aborted = true;
                 throw new SaslException("SASL mechanism does not expect any initial response");
@@ -65,58 +66,64 @@ public class DIDChallengeSaslServer extends DIDChallengeSaslBase implements Sasl
     }
 
     private byte[] evaluateResponseForEmptyChallenge() throws SaslException {
-        this.challenge = DIDChallengeGenerator.generateChallenge(this.serverName);
-        log.debug("Generated challenge: {}", this.challenge);
-        byte[] challengeData = this.challenge.getMessageBytes();
+        this.saslChallenge = DIDChallengeGenerator.generateChallenge(this.serverName);
+        log.debug("Generated challenge: {}", this.saslChallenge);
+        byte[] challengeData = this.saslChallenge.getMessageBytes();
         return challengeData.clone();
     }
 
     private byte[] evaluateResponseForChallenge(byte[] responseBytes) throws SaslException {
-        log.debug("Received response: {}", new String(responseBytes, StandardCharsets.UTF_8));
 
-        String response = new String(responseBytes, StandardCharsets.UTF_8);
-        int didLength = response.indexOf(' ');
-        if (didLength == 0) {
-            this.aborted = true;
-            throw new SaslException("SASL: Invalid response; no DID found");
-        }
+        log.info("Received response: {}", new String(responseBytes, StandardCharsets.UTF_8));
+        SASLResponse saslResponse = SASLResponse.fromMessage(responseBytes);
+        log.debug("Parsed response: {}", saslChallenge);
 
-        String did = response.substring(0, didLength);
-        String signature = response.substring(didLength + 1);
-        log.info("Extracted DID: {}", did);
-        log.info("Extracted signature: {}", signature);
+        if (saslResponse instanceof DIDResponse didResponse) {
 
-        NameCallback ncb = new NameCallback("Server DID: ", did);
-        try {
-            this.cbh.handle(new Callback[] { ncb });
-        } catch (IOException | UnsupportedCallbackException ex) {
-            this.aborted = true;
-            throw new SaslException("SASL authentication failed", ex);
-        }
+            NameCallback ncb = new NameCallback("Server DID: ", didResponse.getDid().getDidString());
+            try {
+                this.cbh.handle(new Callback[] { ncb });
+            } catch (IOException | UnsupportedCallbackException ex) {
+                this.aborted = true;
+                throw new SaslException("SASL authentication failed", ex);
+            }
 
-        try {
-            DIDResponseVerifier.verifySignature(this.challenge.getMessageBytes(), did, signature);
-        } catch (Exception ex) {
-            this.aborted = true;
-            throw new SaslException("Failed to verify signature: " + ex.getMessage(), ex);
-        }
+            try {
+                DIDResponseVerifier.verifyResponse((DIDChallenge) this.saslChallenge, didResponse);
+            } catch (Exception ex) {
+                this.aborted = true;
+                throw new SaslException("Failed to verify DID response: " + ex.getMessage(), ex);
+            }
 
-        AuthorizeCallback acb = new AuthorizeCallback(did, did);
-        try {
-            this.cbh.handle(new Callback[] { acb });
-        } catch (IOException | UnsupportedCallbackException ex) {
-            this.aborted = true;
-            throw new SaslException("SASL: authentication failed", ex);
-        }
+            AuthorizeCallback acb = new AuthorizeCallback(didResponse.getDid().getDidString(), didResponse.getDid().getDidString());
+            try {
+                this.cbh.handle(new Callback[] { acb });
+            } catch (IOException | UnsupportedCallbackException ex) {
+                this.aborted = true;
+                throw new SaslException("SASL: authentication failed", ex);
+            }
 
-        if (acb.isAuthorized()) {
-            this.authorizationId = acb.getAuthorizedID();
-            log.debug("authorizationId: {}", this.authorizationId);
-            this.completed = true;
+            if (acb.isAuthorized()) {
+                this.authorizationId = acb.getAuthorizedID();
+                log.debug("authorizationId: {}", this.authorizationId);
+                this.completed = true;
+                return null;
+            } else {
+                this.aborted = true;
+                throw new SaslException("SASL: user not authorized: " + didResponse.getDid().getDidString());
+            }
+        } else if (saslResponse instanceof VCVPResponse vcvpResponse) {
+
+            try {
+                VCVPResponseVerifier.verifyResponse((VCVPChallenge) this.saslChallenge, vcvpResponse);
+            } catch (Exception ex) {
+                this.aborted = true;
+                throw new SaslException("Failed to verify VC/VP response: " + ex.getMessage(), ex);
+            }
+
             return null;
         } else {
-            this.aborted = true;
-            throw new SaslException("SASL: user not authorized: " + did);
+            throw new SaslException("Response not supported: " + saslResponse);
         }
     }
 }

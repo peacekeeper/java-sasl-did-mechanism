@@ -17,6 +17,7 @@ import sasl.mechanism.did.messages.VCVPChallenge;
 import javax.security.sasl.SaslClient;
 import javax.security.sasl.SaslException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Map;
 
@@ -47,28 +48,29 @@ public class DIDChallengeSaslClient extends DIDChallengeSaslBase implements Sasl
         if (this.completed) throw new IllegalStateException("SASL authentication already completed");
         if (this.aborted) throw new IllegalStateException("SASL authentication already aborted");
 
-        SASLChallenge challenge = SASLChallenge.fromMessage(challengeBytes);
-        log.debug("Received challenge: {}", challenge);
+        log.info("Received challenge: {}", new String(challengeBytes, StandardCharsets.UTF_8));
+        SASLChallenge saslChallenge = SASLChallenge.fromMessage(challengeBytes);
+        log.debug("Parsed challenge: {}", saslChallenge);
 
         SASLResponse response;
-        if (challenge instanceof DIDChallenge didChallenge) {
+        if (saslChallenge instanceof DIDChallenge didChallenge) {
             try {
                 response = DIDResponseGenerator.generateResponse(didChallenge, this.did, this.privateKey);
             } catch (GeneralSecurityException ex) {
                 throw new SaslException("Failed to create DID Response:" + ex.getMessage(), ex);
             }
-        } else if (challenge instanceof VCVPChallenge vcvpChallenge) {
+        } else if (saslChallenge instanceof VCVPChallenge vcvpChallenge) {
             try {
                 response = VCVPResponseGenerator.generateResponse(vcvpChallenge, this.did, this.privateKey, this.verifiableCredentials);
             } catch (GeneralSecurityException | JsonLDException | IOException ex) {
                 throw new SaslException("Failed to create VC/VP Response:" + ex.getMessage(), ex);
             }
         } else {
-            throw new SaslException("Challenge not supported: " + challenge);
+            throw new SaslException("Challenge not supported: " + saslChallenge);
         }
 
         this.completed = true;
-        log.debug("Sending response: {}", response);
+        log.info("Sending response: {}", response);
         return response.getMessageBytes();
     }
 

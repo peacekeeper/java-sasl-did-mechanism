@@ -1,8 +1,5 @@
 package sasl.mechanism.did.messages;
 
-import foundation.identity.did.DID;
-import org.bouncycastle.util.encoders.Base64;
-
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

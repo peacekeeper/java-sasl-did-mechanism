@@ -11,7 +11,7 @@ public class SASLResponse extends SASLMessage {
         super(messageBytes, message);
     }
 
-    public static SASLResponse fromMessage(byte[] messageBytes) throws SaslException, ParserException {
+    public static SASLResponse fromMessage(byte[] messageBytes) throws SaslException {
         SASLResponse saslResponse = null;
         if (saslResponse == null) saslResponse = DIDResponse.fromMessage(messageBytes);
         if (saslResponse == null) saslResponse = VCVPResponse.fromMessage(messageBytes);

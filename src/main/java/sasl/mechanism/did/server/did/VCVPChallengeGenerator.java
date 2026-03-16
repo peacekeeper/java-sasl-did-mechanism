@@ -13,7 +13,7 @@ public class VCVPChallengeGenerator {
     private static final Random RANDOM = new Random();
 
     public static VCVPChallenge generateChallenge(String vcType, String realm) {
-        String nonce = Long.toString(RANDOM.nextLong());
+        String nonce = Long.toString(Math.abs(RANDOM.nextLong()));
         long timestamp = System.currentTimeMillis();
         VCVPChallenge vcvpChallenge = VCVPChallenge.create(nonce, timestamp, vcType, realm);
         log.debug("Generated challenge: {}", vcvpChallenge);
